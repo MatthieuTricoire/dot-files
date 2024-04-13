@@ -1,0 +1,20 @@
+# Compiled Python files
+*.pyc
+
+# Folder view configuration files
+.DS_Store
+desktop.ini
+
+# Thumbnail cache files
+Thumbs.db
+
+# Editor`s configs
+*.sublime-*
+
+# Ignore Westorm files
+.idea
+
+
+# Ingore .env files
+.env
+.env.local
