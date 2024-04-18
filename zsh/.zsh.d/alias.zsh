@@ -1,21 +1,19 @@
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-#
 alias c="clear"
 alias sz="source ~/.zshrc; echo '~/.zshrc sourced'"
 alias vz="vi ~/.zshrc"
 
-alias ls='exa'
-alias ll='exa -alh'
-alias tree='exa --tree'
+# ---- Eza (better ls) -----
+alias ls="eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions"
+alias ll="eza -alh --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions"
+alias tree="eza --tree --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions"
 
 
-
-## Add nvim config switcher
+# ---- Nvim config switcher -----
 alias nvim-lazy="NVIM_APPNAME=lazyvim nvim"
 alias nvim-lazy="NVIM_APPNAME=astronvim nvim"
 alias nvim-lazy="NVIM_APPNAME=matthnvim nvim"
-#shortcut tolazyvim
-bindkey -s ^a "nvims\n"
+
+
+# ---- Replace cd with zoxide -----
+alias cd="z"
 
