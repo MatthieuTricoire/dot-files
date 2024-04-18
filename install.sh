@@ -35,7 +35,7 @@ clone_or_pull() {
 	if [ ! -d "$directory" ]; then
 		git clone "$repo_url" "$directory" || exit 1
 	else
-		cd "$directory" && git pull "$repo_url" || exit 1
+		cd "$directory" && git pull "$repo_url" || exit 2
 	fi
 }
 
@@ -64,19 +64,15 @@ install_plugins theme powerlevel10k https://github.com/romkatv/powerlevel10k.git
 install_plugins plugin ohmyzsh-full-autoupdate https://github.com/Pilaton/OhMyZsh-full-autoupdate.git
 install_plugins plugin you-should-use https://github.com/MichaelAquilina/zsh-you-should-use.git
 install_plugins plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git
-install_plugins plugin zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions.git
 
 echo "Setup configs via stow"
 cd $HOME/.dotfiles || exit 1
 stow stow
 stow zsh
 stow tmux
-stow vim
 stow git
 stow fd
-stow bat
 stow iterm2
-stow lazygit
 
 echo "Setting up iTerm2 preferences..."
 
