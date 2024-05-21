@@ -1,17 +1,9 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.dap.core",
-    "lazyvim.plugins.extras.editor.harpoon2",
-    "lazyvim.plugins.extras.editor.mini-files",
-    "lazyvim.plugins.extras.editor.mini-move",
-    "lazyvim.plugins.extras.formatting.prettier",
-    "lazyvim.plugins.extras.lang.markdown",
-    "lazyvim.plugins.extras.lang.tailwind",
-    "lazyvim.plugins.extras.lang.typescript",
-    "lazyvim.plugins.extras.linting.eslint"
+
   ],
   "news": {
-    "NEWS.md": "3314"
+    "NEWS.md": "4964"
   },
-  "version": 3
+  "version": 4
 }
