@@ -11,6 +11,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # You can change the theme with another one from https://github.com/robbyrussell/oh-my-zsh/wiki/themes
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
+
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 HIST_STAMPS="mm/dd/yyyy"
@@ -43,6 +44,7 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+
 # Load custom configs
 typeset -a sources
 ZSH_CONFIG_DIR="$HOME/.zsh.d"
@@ -66,6 +68,6 @@ eval "$(zoxide init zsh)"
 # override with local settings
 # source ~/.zshrc.local
 
-# Anything below here was probably added automatically and should be re-adjusted or moved to ~/.zshrc.local
 
+# Anything below here was probably added automatically and should be re-adjusted or moved to ~/.zshrc.local
 PATH=~/.console-ninja/.bin:$PATH
