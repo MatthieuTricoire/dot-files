@@ -11,7 +11,7 @@ alias tree="eza --tree --color=always --long --git --no-filesize --icons=always 
 # ---- Nvim config switcher -----
 alias nvim-lazy="NVIM_APPNAME=lazyvim nvim"
 alias nvim-lazy="NVIM_APPNAME=astronvim nvim"
-alias nvim-lazy="NVIM_APPNAME=matthnvim nvim"
+alias nvim-lazy="NVIM_APPNAME=matthvim nvim"
 
 
 # ---- Replace cd with zoxide -----
