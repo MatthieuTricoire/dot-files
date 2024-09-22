@@ -4,16 +4,18 @@ function mcd() {
 }
 
 function nvims() {
-  items=("lazyvim"  "astronvim" "matthvim")
+  items=("LazyVim" "AstroNvim")
   config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config  " --height=~50% --layout=reverse --border --exit-0)
   if [[ -z $config ]]; then
     echo "Nothing selected"
     return 0
   elif [[ $config == "default" ]]; then
-    config="lazyvim"
+    config=""
   fi
   NVIM_APPNAME=$config nvim $@
 }
+
+bindkey -s ^a "nvims\n"
 
 # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
 # - The first argument to the function ($1) is the base path to start traversal

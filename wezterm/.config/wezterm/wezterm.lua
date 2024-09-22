@@ -1,123 +1,150 @@
 local wezterm = require("wezterm")
 
--- if you are *NOT* lazy-loading smart-splits.nvim (recommended)
-local function is_vim(pane)
-	-- this is set by the plugin, and unset on ExitPre in Neovim
-	return pane:get_user_vars().IS_NVIM == "true"
+local act = wezterm.action
+
+local function isViProcess(pane)
+	-- get_foreground_process_name On Linux, macOS and Windows,
+	-- the process can be queried to determine this path. Other operating systems
+	-- (notably, FreeBSD and other unix systems) are not currently supported
+	-- return pane:get_foreground_process_name():find('n?vim') ~= nil
+	-- Use get_title as it works for multiplexed sessions too
+	return pane:get_title():find("n?vim") ~= nil
 end
 
-local direction_keys = {
-	Left = "h",
-	Down = "j",
-	Up = "k",
-	Right = "l",
-	-- reverse lookup
-	h = "Left",
-	j = "Down",
-	k = "Up",
-	l = "Right",
-}
+local function conditionalActivatePane(window, pane, pane_direction, vim_direction)
+	local vim_pane_changed = false
 
-local function split_nav(resize_or_move, key)
-	return {
-		key = key,
-		mods = resize_or_move == "resize" and "META" or "CTRL",
-		action = wezterm.action_callback(function(win, pane)
-			if is_vim(pane) then
-				-- pass the keys through to vim/nvim
-				win:perform_action({
-					SendKey = { key = key, mods = resize_or_move == "resize" and "META" or "CTRL" },
-				}, pane)
-			else
-				if resize_or_move == "resize" then
-					win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
-				else
-					win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
-				end
-			end
-		end),
-	}
+	if isViProcess(pane) then
+		local before = pane:get_cursor_position()
+		window:perform_action(
+			-- This should match the keybinds you set in Neovim.
+			wezterm.action.SendKey({ key = vim_direction, mods = "CTRL" }),
+			pane
+		)
+		wezterm.sleep_ms(100)
+		local after = pane:get_cursor_position()
+
+		if before.x ~= after.x and before.y ~= after.y then
+			vim_pane_changed = true
+		end
+	end
+
+	if not vim_pane_changed then
+		window:perform_action(wezterm.action.ActivatePaneDirection(pane_direction), pane)
+	end
 end
 
-return {
+wezterm.on("ActivatePaneDirection-right", function(window, pane)
+	conditionalActivatePane(window, pane, "Right", "l")
+end)
+wezterm.on("ActivatePaneDirection-left", function(window, pane)
+	conditionalActivatePane(window, pane, "Left", "h")
+end)
+wezterm.on("ActivatePaneDirection-up", function(window, pane)
+	conditionalActivatePane(window, pane, "Up", "k")
+end)
+wezterm.on("ActivatePaneDirection-down", function(window, pane)
+	conditionalActivatePane(window, pane, "Down", "j")
+end)
 
-	-- window padding
-	window_padding = {
-		left = 10,
-		right = 10,
-		top = 10,
-		bottom = 10,
+local config = {}
+
+-- Use config builder  object if possible
+if wezterm.config_builder then
+	config = wezterm.config_builder()
+end
+
+-- Settings
+config.color_scheme = "Tokyo Night"
+
+config.font = wezterm.font({
+	family = "Monaspace Neon",
+	weight = "Regular",
+	scale = 1.2,
+})
+config.font_size = 12
+config.line_height = 1.05
+
+-- Window settings
+config.window_close_confirmation = "AlwaysPrompt"
+config.window_decorations = "RESIZE"
+config.window_padding = {
+	left = 3,
+	right = 3,
+	top = 0,
+	bottom = 0,
+}
+config.scrollback_lines = 3000
+config.default_workspace = "main"
+
+-- Background
+config.background = {
+	{
+		source = {
+			File = "/Users/matthieutricoire/Documents/wallpaper_le_F.jpg",
+		},
+		hsb = {
+			hue = 1.0,
+			saturation = 1,
+			brightness = 0.55,
+		},
 	},
-	-- deactivate bell sound
-	audible_bell = "Disabled",
-
-	-- define leader key
-	leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 },
-	keys = {
-		-- full screen
-		{
-			key = "f",
-			mods = "LEADER",
-			action = wezterm.action.ToggleFullScreen,
+	{
+		source = {
+			Color = "#282c35",
 		},
-		-- horizontal split
-		{
-			key = "|",
-			mods = "LEADER",
-			action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-		},
-		-- vertical split
-		{
-			key = "-",
-			mods = "LEADER",
-			action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
-		},
-		-- move between split panes
-		split_nav("move", "h"),
-		split_nav("move", "j"),
-		split_nav("move", "k"),
-		split_nav("move", "l"),
-		-- resize panes
-		split_nav("resize", "h"),
-		split_nav("resize", "j"),
-		split_nav("resize", "k"),
-		split_nav("resize", "l"),
-	},
-
-	-- color_scheme = 'termnial.sexy',
-	-- color_scheme = "Catppuccin Mocha",
-	color_scheme = "rose-pine-moon",
-	enable_tab_bar = true,
-
-	native_macos_fullscreen_mode = true,
-
-	font = wezterm.font("JetBrainsMono Nerd Font", { weight = 400 }),
-	line_height = 1,
-
-	-- font = wezterm.font("MonaspiceXe Nerd Font", { weight = 400 }),
-	-- line_height = 1.2,
-
-	font_size = 18.0,
-	-- macos_window_background_blur = 40,
-	macos_window_background_blur = 30,
-
-	window_background_image = "/Users/matthieutricoire/Documents/Images/Wallpapers/evening-pixel-art.jpeg",
-	window_background_image_hsb = {
-		brightness = 0.3,
-		hue = 1.0,
-		saturation = 0.8,
-	},
-	-- window_background_opacity = 0.92,
-	-- window_background_opacity = 0.8,
-	-- window_background_opacity = 0.78,
-	-- window_background_opacity = 0.20,
-	window_decorations = "RESIZE",
-	mouse_bindings = {
-		-- Ctrl-click will open the link under the mouse cursor
-		{
-			event = { Up = { streak = 1, button = "Left" } },
-			mods = "CTRL",
-			action = wezterm.action.OpenLinkAtMouseCursor,
-		},
+		width = "100%",
+		height = "100%",
+		opacity = 0.55,
 	},
 }
+
+-- Keys
+config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
+
+config.keys = {
+	-- Send C-a when pressing C-a twice
+	{ key = "a", mods = "LEADER", action = act.SendKey({ key = "a", mods = "CTRL" }) },
+
+	{ key = "c", mods = "LEADER", action = act.ActivateCopyMode },
+
+	-- Pane keybindings
+	{ key = "_", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "|", mods = "LEADER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "x", mods = "LEADER", action = act.CloseCurrentPane({ confirm = true }) },
+	{ key = "f", mods = "LEADER", action = act.TogglePaneZoomState },
+	{ key = "r", mods = "LEADER", action = act.RotatePanes("Clockwise") },
+	--
+	{ key = "s", mods = "LEADER", action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false }) },
+	{ key = "m", mods = "LEADER", action = act.ActivateKeyTable({ name = "move_tab", one_shot = false }) },
+
+	-- Integration with neovim panes
+	{ key = "h", mods = "CTRL", action = wezterm.action.EmitEvent("ActivatePaneDirection-left") },
+	{ key = "j", mods = "CTRL", action = wezterm.action.EmitEvent("ActivatePaneDirection-down") },
+	{ key = "k", mods = "CTRL", action = wezterm.action.EmitEvent("ActivatePaneDirection-up") },
+	{ key = "l", mods = "CTRL", action = wezterm.action.EmitEvent("ActivatePaneDirection-right") },
+}
+
+config.key_tables = {
+	resize_pane = {
+		{ key = "h", action = act.AdjustPaneSize({ "Left", 1 }) },
+		{ key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
+		{ key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
+		{ key = "l", action = act.AdjustPaneSize({ "Right", 1 }) },
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "Enter", action = "PopKeyTable" },
+	},
+	move_tab = {
+		{ key = "h", action = act.MoveTabRelative(-1) },
+		{ key = "j", action = act.MoveTabRelative(-1) },
+		{ key = "k", action = act.MoveTabRelative(1) },
+		{ key = "l", action = act.MoveTabRelative(1) },
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "Enter", action = "PopKeyTable" },
+	},
+}
+
+-- Tab bar
+config.use_fancy_tab_bar = false
+
+return config

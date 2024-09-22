@@ -71,3 +71,7 @@ eval "$(zoxide init zsh)"
 
 # Anything below here was probably added automatically and should be re-adjusted or moved to ~/.zshrc.local
 PATH=~/.console-ninja/.bin:$PATH
+
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
