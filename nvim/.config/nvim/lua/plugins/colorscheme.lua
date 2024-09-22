@@ -11,7 +11,6 @@ local colors = {
 local custom_highlights = function(colors)
   return {
     LineNr = { fg = colors.hint },
-    -- CursorLine = { bg = colors.green },
     CursorLineNr = { fg = colors.green },
 
     DiagnosticUnderlineError = { undercurl = true, sp = colors.red },
