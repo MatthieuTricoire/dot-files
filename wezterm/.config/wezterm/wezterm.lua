@@ -58,21 +58,22 @@ end
 config.color_scheme = "Tokyo Night"
 
 config.font = wezterm.font({
-	family = "JetBrainsMono Nerd Font",
+	family = "Monaspace Neon",
 	weight = "Regular",
 	scale = 1.2,
 })
 config.font_size = 12
-config.line_height = 1.05
+config.line_height = 1.1
 
 -- Window settings
+config.native_macos_fullscreen_mode = true
 config.window_close_confirmation = "AlwaysPrompt"
 config.window_decorations = "RESIZE"
 config.window_padding = {
-	left = 3,
-	right = 3,
-	top = 0,
-	bottom = 0,
+	left = 6,
+	right = 6,
+	top = 6,
+	bottom = 6,
 }
 config.scrollback_lines = 3000
 config.default_workspace = "main"
