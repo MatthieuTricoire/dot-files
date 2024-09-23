@@ -58,7 +58,7 @@ end
 config.color_scheme = "Tokyo Night"
 
 config.font = wezterm.font({
-	family = "Monaspace Neon",
+	family = "JetBrainsMono Nerd Font",
 	weight = "Regular",
 	scale = 1.2,
 })
@@ -78,6 +78,11 @@ config.scrollback_lines = 3000
 config.default_workspace = "main"
 
 -- Background
+-- config.macos_window_background_blur = 20
+config.inactive_pane_hsb = {
+	saturation = 0.8,
+	brightness = 0.4,
+}
 config.background = {
 	{
 		source = {
@@ -95,7 +100,7 @@ config.background = {
 		},
 		width = "100%",
 		height = "100%",
-		opacity = 0.55,
+		opacity = 0.75,
 	},
 }
 
@@ -108,6 +113,19 @@ config.keys = {
 
 	{ key = "c", mods = "LEADER", action = act.ActivateCopyMode },
 
+	-- Make Option-Left equivalent to Alt-b which many line editors interpret as backward-word
+	{
+		key = "LeftArrow",
+		mods = "OPT",
+		action = wezterm.action({ SendString = "\x1bb" }),
+	},
+
+	-- Make Option-Right equivalent to Alt-f; forward-word
+	{
+		key = "RightArrow",
+		mods = "OPT",
+		action = wezterm.action({ SendString = "\x1bf" }),
+	},
 	-- Pane keybindings
 	{ key = "_", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	{ key = "|", mods = "LEADER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
@@ -145,6 +163,7 @@ config.key_tables = {
 }
 
 -- Tab bar
-config.use_fancy_tab_bar = false
+-- config.use_fancy_tab_bar = false
+config.hide_tab_bar_if_only_one_tab = true
 
 return config
